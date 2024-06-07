@@ -30,7 +30,7 @@ export class ConstantaUtil{
     public static readonly SM_SESSION_KEY: string = 'sm-session-id'
     public static readonly SM_TIMESTAMP_KEY: string = 'sm-timestamp'
     public static readonly EXPIRED_SESSION: string = 'Session anda telah habis, mohon untuk re-login kembali'
-    public static readonly SM_USER_PROFILE: string = 'profile'
+    public static readonly USER_PROFILE: string = 'profile'
     //CODE RESPONSE
     public static readonly GET_SERVICE_SUCCESS = 200
 

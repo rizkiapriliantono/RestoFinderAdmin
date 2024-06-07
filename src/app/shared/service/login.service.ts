@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ReqLoginUser } from '../../inteface/req';
@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class LoginApiService {
+export class LoginService {
   private baseUrl: string = environment.apiUrl + '/master-vendor-api';
   private baseUrl2: string = environment.apiUrl + '/master-vendor-api';
 
@@ -21,16 +21,24 @@ export class LoginApiService {
   //   return this.httpClient.post(`${this.baseUrl}/common/getDetailVendorNotPermanentInternal`, { req });
   // }
 
-  getDataLogin(req: ReqLoginUser): Observable<any> {
-    // Ganti URL sesuai dengan endpoint login Anda
-    const loginUrl = 'http://example.com/api/login';
-    // Kirim permintaan POST untuk login
-    return this.httpClient.post(loginUrl, { req });
+  // getDataLogin(req: ReqLoginUser): Observable<any> {
+  //   // Ganti URL sesuai dengan endpoint login Anda
+  //   const loginUrl = 'http://example.com/api/login';
+  //   // Kirim permintaan POST untuk login
+  //   return this.httpClient.post(loginUrl, { req });
+  // }
+
+  // generateToken(user: any): string {
+  //   // Contoh sederhana untuk menghasilkan token dari data pengguna
+  //   return btoa(JSON.stringify(user));
+  // }
+
+  loginWithGoogle(token: string): Observable<HttpResponse<any>> {
+    return this.httpClient.post<any>('/api/auth/google', { token }, { observe: 'response' });
   }
 
-  generateToken(user: any): string {
-    // Contoh sederhana untuk menghasilkan token dari data pengguna
-    return btoa(JSON.stringify(user));
+  loginWithCredentials(email: string, password: string): Observable<any> {
+    return this.httpClient.post<any>('http://localhost:8000/api/auth/login', { email, password });
   }
 
   // getSubCategoryCoverage(req: ReqSubCategoryCoverage) {

@@ -1,14 +1,11 @@
-import { Component, OnInit, AfterViewInit, ElementRef, Inject, LOCALE_ID, ViewChild } from '@angular/core';
-import { AppComponent } from '../../app.component';
-import { CommonUtils } from '../../shared/utils/commonUtil';
+import { Component, OnInit, AfterViewInit, ElementRef, Inject, LOCALE_ID, ViewChild, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { LoginApiService } from '../../shared/service/login.service';
-import { HttpClientModule } from '@angular/common/http';
-import { ReqLoginUser } from '../../inteface/req';
+import { LoginService } from '../../shared/service/login.service';
+import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ConstantaUtil } from '../../shared/utils/constantaUtil';
+import { CommonUtils } from '../../shared/utils/commonUtil';
 
 declare const google: any;
 
@@ -24,14 +21,14 @@ declare const google: any;
 export class LoginAdminComponent implements OnInit, AfterViewInit {
 
   @ViewChild('loginRef', { static: true }) loginElement!: ElementRef;
+  email: string = '';
+  password: string = '';
 
   constructor(
-    public app: AppComponent,
-    public util: CommonUtils,
     private router: Router,
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    private loginService: LoginApiService,
+    private loginService: LoginService,
+    private ngZone: NgZone,  // Injeksi NgZone di sini
+    private util: CommonUtils,  // Injeksi NgZone di sini
     @Inject(LOCALE_ID) private locale: string
   ) {}
 
@@ -57,39 +54,37 @@ export class LoginAdminComponent implements OnInit, AfterViewInit {
     );
   }
 
-
   handleCredentialResponse(response: any): void {
     const responsePayload = this.decodeJWTToken(response.credential);
-    sessionStorage.setItem('loggedInUser', JSON.stringify(responsePayload));
-    this.router.navigate(['/dashboard']);
+    // localStorage.setItem('authToken', JSON.stringify(responsePayload));
+    localStorage.setItem(ConstantaUtil.USER_PROFILE, this.util.encrypt(JSON.stringify(responsePayload)));
+    this.ngZone.run(() => {
+      this.router.navigate(['/dashboard']);
+  });
   }
 
   decodeJWTToken(token: string): any {
     return JSON.parse(atob(token.split('.')[1]));
   }
 
-  triggerGoogleSignIn(): void {
-    // Panggil fungsi atau metode yang memicu proses Google Sign-In
-    this.renderGoogleButton(); // atau fungsi apapun yang sesuai dengan implementasi Anda
+  loginWithEmail(): void {
+    this.loginService.loginWithCredentials(this.email, this.password).subscribe(
+      res => {
+        const jwtToken = res.token;
+        localStorage.setItem('authToken', jwtToken);
+
+        // Menggunakan NgZone untuk navigasi
+        this.ngZone.run(() => {
+          this.router.navigate(['/dashboard']);
+        });
+      },
+      error => {
+        console.error('Login error:', error);
+      }
+    );
   }
 
   goToSignup(): void {
     this.router.navigate(['/signup']);
-  }
-
-  goToLogin(): void {
-    const userLogin: ReqLoginUser = { email: 'admin', password: '123' }; // Inisialisasi userLogin
-    this.loginService.getDataLogin(userLogin).subscribe(
-      (response) => {
-        // Tanggapan berhasil dari permintaan login
-        const token = this.loginService.generateToken(response.user);
-        console.log('Token:', token);
-        // Anda dapat menyimpan token ke penyimpanan lokal di sini
-      },
-      (error) => {
-        // Tanggapan gagal dari permintaan login
-        console.error('Login error:', error);
-      }
-    );
   }
 }

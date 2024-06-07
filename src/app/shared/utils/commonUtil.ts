@@ -20,11 +20,11 @@ export class CommonUtils {
     /**
      * Need on several pages
      */
-    // public localStorageUserSession() {
-    //     if (localStorage.getItem('profile')) {
-    //         return JSON.parse(this.decyprt(localStorage.getItem('profile')));
-    //     }
-    // }
+    public localStorageUserSession() {
+        if (localStorage.getItem('profile')) {
+            return JSON.parse(this.decyprt(localStorage.getItem('profile')));
+        }
+    }
 
     // public localStorageUserItemPost() {
     //     if (localStorage.getItem('item-post')) {
@@ -71,51 +71,54 @@ export class CommonUtils {
     }
 
     /**
-     * Param Crypto
-     */
-    private getCryptoJS() {
-      const CryptoJS = require('crypto-js');
-      const pass = CryptoJS.enc.Utf8.parse(environment.SECRET);
-      const salt = CryptoJS.enc.Utf8.parse(environment.SALT);
-      const iv = CryptoJS.enc.Utf8.parse(environment.SECRET);
-      const key = CryptoJS.PBKDF2(pass, salt, {
-        keySize: 256 / 32,
-        iterations: environment.ITERATION
-      });
-      return { CryptoJS, iv, key };
-    }
+   * Param Crypto
+   */
+  private getCryptoJS() {
+    const CryptoJS = require('crypto-js');
+    const pass = CryptoJS.enc.Utf8.parse(environment.SECRET);
+    const salt = CryptoJS.enc.Utf8.parse(environment.SALT);
+    const iv = CryptoJS.enc.Utf8.parse(environment.SECRET);
+    const key = CryptoJS.PBKDF2(pass, salt, {
+      keySize: 256 / 32,
+      iterations: environment.ITERATION
+    });
+    return { CryptoJS, iv, key };
+  }
 
-    // public encrypt(value) {
-    //     return btoa(
-    //         this.CryptoJS.AES.encrypt(JSON.stringify(value), this.key, {
-    //             iv: this.iv,
-    //             mode: this.CryptoJS.mode.CBC,
-    //             padding: this.CryptoJS.pad.Pkcs7,
-    //         }).toString()
-    //     );
-    // }
+  public encrypt(value: any) {
+    const { CryptoJS, iv, key } = this.getCryptoJS();
+    return btoa(
+      CryptoJS.AES.encrypt(JSON.stringify(value), key, {
+        iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      }).toString()
+    );
+  }
 
-     /**
-     * Add by @Rizkia04
-     * @copyright Encrypted data String
-     */
-    //  public encryptString(value) {
-    //     return btoa(
-    //         this.CryptoJS.AES.encrypt(value, this.key, {
-    //             iv: this.iv,
-    //             mode: this.CryptoJS.mode.CBC,
-    //             padding: this.CryptoJS.pad.Pkcs7,
-    //         }).toString()
-    //     );
-    // }
+  /**
+   * Add by @Rizkia04
+   * @copyright Encrypted data String
+   */
+  public encryptString(value: any) {
+    const { CryptoJS, iv, key } = this.getCryptoJS();
+    return btoa(
+      CryptoJS.AES.encrypt(value, key, {
+        iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      }).toString()
+    );
+  }
 
-    // public decyprt(value) {
-    //     return this.CryptoJS.AES.decrypt(atob(value), this.key, {
-    //         iv: this.iv,
-    //         mode: this.CryptoJS.mode.CBC,
-    //         padding: this.CryptoJS.pad.Pkcs7,
-    //     }).toString(this.CryptoJS.enc.Utf8);
-    // }
+  public decyprt(value: any) {
+    const { CryptoJS, iv, key } = this.getCryptoJS();
+    return CryptoJS.AES.decrypt(atob(value), key, {
+      iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    }).toString(CryptoJS.enc.Utf8);
+  }
 
     /**
      * @author pramudhavardanik01
@@ -235,23 +238,23 @@ export class CommonUtils {
     }
      //#endregion param iframe
 
-     public encrypt(value: any) {
-      const { CryptoJS, iv, key } = this.getCryptoJS();
-      return btoa(
-        CryptoJS.AES.encrypt(JSON.stringify(value), key, {
-          iv,
-          mode: CryptoJS.mode.CBC,
-          padding: CryptoJS.pad.Pkcs7
-        }).toString()
-      );
-    }
+    //  public encrypt(value: any) {
+    //   const { CryptoJS, iv, key } = this.getCryptoJS();
+    //   return btoa(
+    //     CryptoJS.AES.encrypt(JSON.stringify(value), key, {
+    //       iv,
+    //       mode: CryptoJS.mode.CBC,
+    //       padding: CryptoJS.pad.Pkcs7
+    //     }).toString()
+    //   );
+    // }
 
-    public decyprt(value: any) {
-      const { CryptoJS, iv, key } = this.getCryptoJS();
-      return CryptoJS.AES.decrypt(atob(value), key, {
-        iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-      }).toString(CryptoJS.enc.Utf8);
-    }
+    // public decyprt(value: any) {
+    //   const { CryptoJS, iv, key } = this.getCryptoJS();
+    //   return CryptoJS.AES.decrypt(atob(value), key, {
+    //     iv,
+    //     mode: CryptoJS.mode.CBC,
+    //     padding: CryptoJS.pad.Pkcs7
+    //   }).toString(CryptoJS.enc.Utf8);
+    // }
 }
