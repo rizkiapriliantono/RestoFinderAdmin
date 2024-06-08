@@ -5,6 +5,8 @@ import { ConstantaUtil } from './constantaUtil';
 import { AES } from 'crypto-js';
 import { FuseConfirmationService } from '../../ui-service/confirmation/confirmation.service';
 import { environment } from '../../../environments/environment';
+import * as CryptoJS from 'crypto-js';
+
 
 declare var require: any;
 
@@ -22,7 +24,7 @@ export class CommonUtils {
      */
     public localStorageUserSession() {
         if (localStorage.getItem('profile')) {
-            return JSON.parse(this.decyprt(localStorage.getItem('profile')));
+            return JSON.parse(this.decrypt(localStorage.getItem('profile')));
         }
     }
 
@@ -74,7 +76,7 @@ export class CommonUtils {
    * Param Crypto
    */
   private getCryptoJS() {
-    const CryptoJS = require('crypto-js');
+    // const CryptoJS = require('crypto-js');
     const pass = CryptoJS.enc.Utf8.parse(environment.SECRET);
     const salt = CryptoJS.enc.Utf8.parse(environment.SALT);
     const iv = CryptoJS.enc.Utf8.parse(environment.SECRET);
@@ -111,7 +113,7 @@ export class CommonUtils {
     );
   }
 
-  public decyprt(value: any) {
+  public decrypt(value: any) {
     const { CryptoJS, iv, key } = this.getCryptoJS();
     return CryptoJS.AES.decrypt(atob(value), key, {
       iv,

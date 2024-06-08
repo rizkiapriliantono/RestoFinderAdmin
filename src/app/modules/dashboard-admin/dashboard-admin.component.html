@@ -3,5 +3,7 @@
 @if(userProfile){
   <ng-container>
     <div>Welcome, {{ userProfile.name}}</div>
+    <button mat-button (click)="onLogout">Log Out</button>
+    <!-- <button mat-button>logout</button> -->
   </ng-container>
 }

@@ -1,5 +1,6 @@
-import { Component, OnInit, AfterViewInit, ElementRef, Inject, LOCALE_ID, ViewChild, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, Inject, LOCALE_ID, ViewChild, NgZone, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import { LoginService } from '../../shared/service/login.service';
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -14,9 +15,8 @@ declare const google: any;
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './login-admin.component.html',
-  styles:[`
-
-`]
+  styles: [`
+  `]
 })
 export class LoginAdminComponent implements OnInit, AfterViewInit {
 
@@ -27,17 +27,39 @@ export class LoginAdminComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private loginService: LoginService,
-    private ngZone: NgZone,  // Injeksi NgZone di sini
-    private util: CommonUtils,  // Injeksi NgZone di sini
-    @Inject(LOCALE_ID) private locale: string
+    private ngZone: NgZone,
+    private util: CommonUtils,
+    @Inject(LOCALE_ID) private locale: string,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  ngOnInit(): void {
-    this.initializeGoogleSignIn();
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    this.renderGoogleButton();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadGoogleScript().then(() => {
+        this.initializeGoogleSignIn();
+        this.renderGoogleButton();
+      }).catch(error => {
+        console.error('Failed to load Google API:', error);
+      });
+    }
+  }
+
+  loadGoogleScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (typeof google !== 'undefined') {
+        resolve();
+      } else {
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = (error: any) => reject(error);
+        document.head.appendChild(script);
+      }
+    });
   }
 
   initializeGoogleSignIn(): void {
@@ -56,11 +78,22 @@ export class LoginAdminComponent implements OnInit, AfterViewInit {
 
   handleCredentialResponse(response: any): void {
     const responsePayload = this.decodeJWTToken(response.credential);
-    // localStorage.setItem('authToken', JSON.stringify(responsePayload));
     localStorage.setItem(ConstantaUtil.USER_PROFILE, this.util.encrypt(JSON.stringify(responsePayload)));
+    localStorage.setItem('authToken', this.util.encrypt(JSON.stringify(responsePayload)));
+    // localStorage.setItem('authToken', JSON.stringify(responsePayload));
+    this.setSessionTimeout();
     this.ngZone.run(() => {
       this.router.navigate(['/dashboard']);
-  });
+    });
+  }
+
+  setSessionTimeout(): void {
+    setTimeout(() => {
+      localStorage.clear();
+      this.ngZone.run(() => {
+        this.router.navigate(['/login']);
+      });
+    }, 10000); // 10 seconds
   }
 
   decodeJWTToken(token: string): any {
@@ -72,8 +105,6 @@ export class LoginAdminComponent implements OnInit, AfterViewInit {
       res => {
         const jwtToken = res.token;
         localStorage.setItem('authToken', jwtToken);
-
-        // Menggunakan NgZone untuk navigasi
         this.ngZone.run(() => {
           this.router.navigate(['/dashboard']);
         });

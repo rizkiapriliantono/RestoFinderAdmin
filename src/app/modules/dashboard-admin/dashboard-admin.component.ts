@@ -19,6 +19,8 @@ export class DashboardAdminComponent implements OnInit {
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
+    console.log('data masuk dashboard');
+
     if (localStorage.getItem(ConstantaUtil.USER_PROFILE)) {
       this.userProfile = JSON.parse(this.util.decrypt(localStorage.getItem(ConstantaUtil.USER_PROFILE)));
     }

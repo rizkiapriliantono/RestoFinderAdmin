@@ -9,15 +9,15 @@
   <script src="https://kit.fontawesome.com/8ea99c527e.js" crossorigin="anonymous"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
-    function decodeJWTToken(token) {
-      return JSON.parse(atob(token.split(".")[1]));
-    }
-    function handleCredentialResponse(response) {
-      const responsePayload = decodeJWTToken(response.credential);
-      sessionStorage.setItem("loggedInUser", JSON.stringify(responsePayload));
-      window.location.href = "/dashboard";
-    }
-  </script>
+  //   function decodeJWTToken(token) {
+  //     return JSON.parse(atob(token.split(".")[1]));
+  //   }
+  //   function handleCredentialResponse(response) {
+  //     const responsePayload = decodeJWTToken(response.credential);
+  //     sessionStorage.setItem("loggedInUser", JSON.stringify(responsePayload));
+  //     window.location.href = "/dashboard";
+  //   }
+  // </script>
 </head>
 <body>
   <app-root></app-root>
