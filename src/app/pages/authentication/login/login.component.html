@@ -1,0 +1,43 @@
+<div class="blank-layout-container justify-content-center align-items-center bg-light-primary">
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+    <div class="col-lg-4 d-flex align-items-center">
+      <mat-card class="cardWithShadow boxed-auth">
+        <mat-card-content class="p-32">
+          <div class="text-center">
+            <!-- <a [routerLink]="['/dashboard']"> -->
+            <img src="./assets/images/restoFinder/logo_restoFinder.svg " class="align-middle m-2" alt="logo" />
+            <!-- </a> -->
+          </div>
+          <div class="flex justify-center items-center h-full mt-6">
+            <div class="w-full sm:w-1/2">
+              <button id="customBtn" mat-stroked-button class="w-full">
+                <div class="flex items-center justify-center">
+                  <img src="/assets/images/svgs/google-icon.svg" alt="google" width="16" class="mr-2" /> Sign in with Google
+                </div>
+              </button>
+            </div>
+          </div>
+          <div class="or-border m-t-30">Login dengan E-Mail</div>
+          <form class="m-t-30">
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput />
+            </mat-form-field>
+            <!-- password -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput type="password" />
+            </mat-form-field>
+            <div class="d-flex align-items-center m-b-12">
+              <a [routerLink]="['/']" class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14">Lupa Password ?</a>
+            </div>
+            <a [routerLink]="['/']" mat-flat-button color="primary" class="w-100"> Masuk </a>
+            <!-- input -->
+          </form>
+          <span class="block font-medium text-center mt-6"> Belum punya akun? <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary font-medium text-sm inline-block ml-2"> Buat akun </a>
+          </span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
