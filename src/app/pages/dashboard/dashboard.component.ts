@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit } from '@angular/core';
 import {
   ApexChart,
   ChartComponent,
@@ -15,6 +15,8 @@ import {
   ApexMarkers,
   ApexResponsive,
 } from 'ng-apexcharts';
+import { UserSession } from 'src/app/inteface/user-session';
+import { CommonUtils } from 'src/app/shared/utils/commonUtil';
 
 interface month {
   value: string;
@@ -130,7 +132,7 @@ const ELEMENT_DATA: productsData[] = [
   templateUrl: './dashboard.component.html',
   encapsulation: ViewEncapsulation.None,
 })
-export class AppDashboardComponent {
+export class AppDashboardComponent implements OnInit {
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
 
   public salesOverviewChart!: Partial<salesOverviewChart> | any;
@@ -188,40 +190,12 @@ export class AppDashboardComponent {
       subtext: 'Payment Done',
     },
   ];
+    // Use Variable
+    userSession!: UserSession;
 
-  // ecommerce card
-  productcards: productcards[] = [
-    {
-      id: 1,
-      imgSrc: '/assets/images/products/s4.jpg',
-      title: 'Boat Headphone',
-      price: '285',
-      rprice: '375',
-    },
-    {
-      id: 2,
-      imgSrc: '/assets/images/products/s5.jpg',
-      title: 'MacBook Air Pro',
-      price: '285',
-      rprice: '375',
-    },
-    {
-      id: 3,
-      imgSrc: '/assets/images/products/s7.jpg',
-      title: 'Red Valvet Dress',
-      price: '285',
-      rprice: '375',
-    },
-    {
-      id: 4,
-      imgSrc: '/assets/images/products/s11.jpg',
-      title: 'Cute Soft Teddybear',
-      price: '285',
-      rprice: '375',
-    },
-  ];
-
-  constructor() {
+  constructor(
+    public _util : CommonUtils,
+  ) {
     // sales overview chart
     this.salesOverviewChart = {
       series: [
@@ -400,5 +374,16 @@ export class AppDashboardComponent {
         },
       },
     };
+  }
+
+  ngOnInit(): void {
+    const userSession = this._util.localStorageUserSession();
+    let b  = JSON.parse(userSession);
+    this.userSession = {
+      name: b.name,
+      email: b.email,
+    }
+    console.log('data userSession: ' + this.userSession);
+    console.log('data userSession 1: ' + b.iss);
   }
 }
